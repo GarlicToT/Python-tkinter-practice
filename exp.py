@@ -17,22 +17,22 @@ import tkinter as tk
 from tkinter import simpledialog
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
+
 
 class MCSimulation:
     def __init__(self, master):
         self.master = master
         self.master.title("My Experiment")
-
-        self.menu_frame = tk.Frame(self.master)
-        self.menu_frame.pack()
         
-        self.menu = tk.Menu(self.menu_frame, font=("黑体",12))
+        self.menu = tk.Menu(self.master, font=("黑体",12))
         self.master.config(menu=self.menu)
 
         self.canvas = tk.Canvas(self.master, width=500, height=500, bg="white")
         self.canvas.pack()
         self.pi_label = tk.Label(self.master, text=" π = ", font=("", 20))
         self.pi_label.pack()
+        self.pi_label.pack_forget()
         
         self.create_menu()
 
@@ -55,22 +55,36 @@ class MCSimulation:
 
     # 用蒙特卡洛方法计算圆周率
     def calculate_pi(self):
-        num = simpledialog.askinteger("Input", "Enter the number of points:")
-        points_in_circle = 0
-
-        for _ in range(num):
-            x,y = np.random.uniform(0,1,2)
-            distance = np.sqrt((x-0.5)**2 + (y-0.5)**2)
-
-            if distance <= 0.5:
-                points_in_circle += 1
-                self.canvas.create_oval(x*500-1, y*500-1, x*500+1, y*500+1, fill="red")
-
-            else:
-                self.canvas.create_oval(x*500-1, y*500-1, x*500+1, y*500+1, fill="blue")
-
-        pi = 4*points_in_circle / num
-        self.pi_label.config(text="Pi = {:.4f}".format(pi))
+        # 接受用户输入随机点的个数n
+        n = simpledialog.askinteger("输入", "请输入随机点的个数n：")
+        # 设置圆的半径和圆心
+        radius = 1.0
+        a,b = (0.,0.)
+        # 设置正方形的边长
+        x_left, x_right = (a-radius, a+radius)
+        y_down, y_up = (b-radius, b+radius)
+        # 在正方形区域内随机投点
+        x = np.random.uniform(x_left, x_right, n)
+        y = np.random.uniform(y_down, y_up, n)
+        # 求平方根运算，计算点到圆心的距离，返回距离数组dis
+        dis = np.sqrt((x-a)**2 + (y-b)**2)
+        # 统计落在圆内的点的个数
+        count = sum(np.where(dis <= radius))
+        # 计算圆周率的近似值
+        pi = 4*count/n
+        print("π = ", pi)
+        # 用pyplot进行可视化
+        fig = plt.figure()
+        ax1=fig.add_subplot(111)
+        ax1.set_title('蒙特卡洛算法计算圆周率')
+        # 更改标题字体为SimHei
+        plt.rcParams['font.sans-serif']=['SimHei']
+        ax1.plot(x, y, 'ro', color= "yellow", markersize=1)
+        # 保持作图时正方形的边长相等，否则会出现椭圆
+        plt.axis("equal")
+        circle = Circle(xy=(a,b), radius=radius, alpha=0.5, color="blue")
+        ax1.add_patch(circle)
+        plt.show()
 
     def poisson(self):
         pass
