@@ -31,8 +31,8 @@ class MCSimulation:
 
         self.canvas = tk.Canvas(self.master, width=500, height=500, bg="white")
         self.canvas.pack()
-        # self.pi_label = tk.Label(self.master, text=" π = ", font=("", 20))
-        # self.pi_label.pack()
+        self.pi_label = tk.Label(self.master, text=" π = ", font=("", 20))
+        self.pi_label.pack()
         
         self.create_menu()
 
