@@ -1,16 +1,18 @@
 import tkinter as tk
 from tkinter import simpledialog
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.lines import Line2D
 from matplotlib.patches import Circle
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-from matplotlib.figure import Figure
 
 
 class MCSimulation:
     def __init__(self, master):
         self.master = master
         self.master.title("My Experiment")
+        self.master.geometry("800x500")
         
         self.menu = tk.Menu(self.master, font=("黑体",12))
         self.master.config(menu=self.menu)
@@ -22,6 +24,8 @@ class MCSimulation:
         self.pi_label.pack_forget()
 
         self.create_menu()
+
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def create_menu(self):
         # Create a menu
@@ -69,7 +73,7 @@ class MCSimulation:
         # 更改标题字体为SimHei
         plt.rcParams['font.sans-serif']=['SimHei']
         plt.rcParams['axes.unicode_minus'] = False
-        ax1.plot(x, y, 'ro', color= "orange", markersize=1, alpha=0.5)
+        ax1.plot(x, y, 'o', color= "orange", markersize=1, alpha=0.5)
         # 保持作图时正方形的边长相等
         plt.axis("equal")
         circle = Circle(xy=(a,b), radius=radius, alpha=0.5, color="blue")
@@ -84,9 +88,13 @@ class MCSimulation:
         x1 = a + radius*np.cos(theta)
         y1 = b + radius*np.sin(theta)
         plt.plot(x1, y1, color="blue")
-        legend_text = f'生成随机点数目 n= {n}\n落在圆内的随机点数目 m= {count}'
-        plt.legend([legend_text], loc="upper right", fontsize=8)
-        plt.xlim(-1.5,2.5)
+
+        legend_icon1 = Line2D([0], [0], marker='o', color='orange', label='生成随机点数目')
+        legend_icon2 = Line2D([0], [0], marker='o', color='blue', label='落在圆内的随机点数目')
+        legend_text1 = f'生成随机点数目 n={n}'
+        legend_text2 = f'落在圆内的随机点数目 m={count}'
+        plt.legend([legend_icon1, legend_icon2], [legend_text1, legend_text2], loc="upper right", fontsize=8, handlelength=0, borderpad=1, labelspacing=0.5)
+        plt.xlim(-1.5,2.3)
 
         canvas = FigureCanvasTkAgg(fig, master=self.master)
         canvas.get_tk_widget().place(x=0, y=0)
@@ -101,9 +109,11 @@ class MCSimulation:
     def law_of_large_numbers(self):
         pass
 
+    def on_closing(self):
+        plt.close('all')
+        self.master.destroy()
+
 if __name__ == "__main__":
     root = tk.Tk()
-    # root.geometry("800x600")
-    root.resizable(False, False) 
     app = MCSimulation(root)
     root.mainloop()
