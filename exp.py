@@ -103,5 +103,7 @@ class MCSimulation:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    # root.geometry("800x600")
+    root.resizable(False, False) 
     app = MCSimulation(root)
     root.mainloop()
