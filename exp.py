@@ -1,23 +1,10 @@
-'''实验任务
-(1)采用可视化设计，有菜单界面。
-
-(2)利用蒙特卡洛方法计算圆周率并展示结果。
-
-(3)验证泊松定理并展示，对于泊松分布固定的，随着二项分布n的增加，二项分布逐渐收敛于泊松分布。
-
-(4)给定参数μ和σ，展示对应的正态分布概率密度图；通过动态调整参数μ或σ，展示图像的变化。
-
-(5)生成正态分布的样本，验证大数定律。画图展示随着样本容量的增加，随机变量的算术平均依概率收敛到数学期望。
-
-
-3. 实验设备及环境
-开发环境：Python 3.10(tkinter)  + Numpy + Scipy + matlibplot'''
-
 import tkinter as tk
 from tkinter import simpledialog
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
 
 
 class MCSimulation:
@@ -33,7 +20,7 @@ class MCSimulation:
         self.pi_label = tk.Label(self.master, text=" π = ", font=("", 20))
         self.pi_label.pack()
         self.pi_label.pack_forget()
-        
+
         self.create_menu()
 
     def create_menu(self):
@@ -56,7 +43,7 @@ class MCSimulation:
     # 用蒙特卡洛方法计算圆周率
     def calculate_pi(self):
         # 接受用户输入随机点的个数n
-        n = simpledialog.askinteger("输入", "请输入随机点的个数n：")
+        n = simpledialog.askinteger("输入", "请输入随机点的个数n：", initialvalue=30000)
         # 设置圆的半径和圆心
         radius = 1.0
         a,b = (0.,0.)
@@ -69,22 +56,41 @@ class MCSimulation:
         # 求平方根运算，计算点到圆心的距离，返回距离数组dis
         dis = np.sqrt((x-a)**2 + (y-b)**2)
         # 统计落在圆内的点的个数
-        count = sum(np.where(dis <= radius))
+        # count = sum(np.where(dis <= radius))
+        count = np.sum(dis <= radius)
         # 计算圆周率的近似值
         pi = 4*count/n
         print("π = ", pi)
+
         # 用pyplot进行可视化
         fig = plt.figure()
         ax1=fig.add_subplot(111)
-        ax1.set_title('蒙特卡洛算法计算圆周率')
+        ax1.set_title(f'蒙特卡洛算法估计的圆周率数值为：{pi:.4f}')
         # 更改标题字体为SimHei
         plt.rcParams['font.sans-serif']=['SimHei']
-        ax1.plot(x, y, 'ro', color= "yellow", markersize=1)
-        # 保持作图时正方形的边长相等，否则会出现椭圆
+        plt.rcParams['axes.unicode_minus'] = False
+        ax1.plot(x, y, 'ro', color= "orange", markersize=1, alpha=0.5)
+        # 保持作图时正方形的边长相等
         plt.axis("equal")
         circle = Circle(xy=(a,b), radius=radius, alpha=0.5, color="blue")
         ax1.add_patch(circle)
-        plt.show()
+        # 画出正方形的边界
+        plt.plot([x_left, x_right], [y_up, y_up], color="orange")
+        plt.plot([x_left, x_right], [y_down, y_down], color="orange")
+        plt.plot([x_left, x_left], [y_up, y_down], color="orange")
+        plt.plot([x_right, x_right], [y_up, y_down], color="orange")
+        # 画出圆的边界
+        theta = np.arange(0, 2*np.pi, 0.01)
+        x1 = a + radius*np.cos(theta)
+        y1 = b + radius*np.sin(theta)
+        plt.plot(x1, y1, color="blue")
+        legend_text = f'生成随机点数目 n= {n}\n落在圆内的随机点数目 m= {count}'
+        plt.legend([legend_text], loc="upper right", fontsize=8)
+        plt.xlim(-1.5,2.5)
+
+        canvas = FigureCanvasTkAgg(fig, master=self.master)
+        canvas.get_tk_widget().place(x=0, y=0)
+        canvas.draw()
 
     def poisson(self):
         pass
