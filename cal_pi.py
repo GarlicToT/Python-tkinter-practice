@@ -1,5 +1,4 @@
 # 从同一文件夹中导入exp.py
-import tkinter as tk
 from tkinter import simpledialog
 
 import matplotlib.pyplot as plt
@@ -10,27 +9,28 @@ from matplotlib.patches import Circle
 
 
 def calculate_pi(master):
-        # 接受用户输入随机点的个数n
-        n = simpledialog.askinteger("输入", "请输入随机点的个数n：", initialvalue=30000)
-        # tk.Entry(self.master, textvariable="123").pack()
-        # 设置圆的半径和圆心
-        radius = 1.0
-        a,b = (0.,0.)
-        # 设置正方形的边长
-        x_left, x_right = (a-radius, a+radius)
-        y_down, y_up = (b-radius, b+radius)
-        # 在正方形区域内随机投点
-        x = np.random.uniform(x_left, x_right, n)
-        y = np.random.uniform(y_down, y_up, n)
-        # 求平方根运算，计算点到圆心的距离，返回距离数组dis
-        dis = np.sqrt((x-a)**2 + (y-b)**2)
-        # 统计落在圆内的点的个数
-        # count = sum(np.where(dis <= radius))
-        count = np.sum(dis <= radius)
-        # 计算圆周率的近似值
-        pi = 4*count/n
-        print("π = ", pi)
+    # 接受用户输入随机点的个数n
+    n = simpledialog.askinteger("输入", "请输入随机点的个数n：", initialvalue=30000)
+    # tk.Entry(self.master, textvariable="123").pack()
+    # 设置圆的半径和圆心
+    radius = 1.0
+    a,b = (0.,0.)
+    # 设置正方形的边长
+    x_left, x_right = (a-radius, a+radius)
+    y_down, y_up = (b-radius, b+radius)
+    # 在正方形区域内随机投点
+    x = np.random.uniform(x_left, x_right, n)
+    y = np.random.uniform(y_down, y_up, n)
+    # 求平方根运算，计算点到圆心的距离，返回距离数组dis
+    dis = np.sqrt((x-a)**2 + (y-b)**2)
+    # 统计落在圆内的点的个数
+    # count = sum(np.where(dis <= radius))
+    count = np.sum(dis <= radius)
+    # 计算圆周率的近似值
+    pi = 4*count/n
+    print("π = ", pi)
 
+    def graph1():
         # 用pyplot进行可视化
         fig = plt.figure()
         ax1=fig.add_subplot(111)
@@ -60,12 +60,46 @@ def calculate_pi(master):
         legend_text2 = f'落在圆内的随机点数目 m={count}'
         plt.legend([legend_icon1, legend_icon2], [legend_text1, legend_text2], loc="upper right", fontsize=8, handlelength=0, borderpad=1, labelspacing=0.5)
         plt.xlim(-1,2)
+        plt.ylim(-1,1)
 
         canvas = FigureCanvasTkAgg(fig, master=master)
         canvas_widget = canvas.get_tk_widget()
-        canvas_widget.place(relx=0.5, rely=0.5, anchor="center")  # 让图居中显示
-        canvas_widget.config(height=400, width=600)
-        canvas.draw()   
+        canvas_widget.place(relx=0.5, rely=0.3, anchor="center")  # 调整相对位置
+        canvas_widget.config(height=300, width=500)
+        canvas.draw()
 
-def graph1():
-    pass
+    def graph2(pi_theoretical):
+        # 计算不同n值下对应的pi模拟值
+        n_values = np.arange(1, n+1)
+        pi_simulated_values = 4 * np.cumsum(dis <= radius) / n_values
+
+        # 创建图表
+        fig, ax2 = plt.subplots()
+        # 设置字体为Simhei
+        plt.rcParams['font.sans-serif']=['SimHei']
+        ax2.set_title("蒙特卡洛算法估计的圆周率收敛性")
+        ax2.set_xlabel("随机点数目 n")
+        ax2.set_ylabel("估计的圆周率 π")
+
+        # 绘制理论值的水平线
+        ax2.axhline(y=pi_theoretical, color="green", label="π的理论值", alpha=0.8)
+        # 绘制模拟值的蓝色线
+        ax2.plot(n_values, pi_simulated_values, color="blue", label="π的模拟计算值", alpha=0.8)
+
+        # 设置图例
+        ax2.legend(loc="lower right", fontsize=8, handlelength=0, borderpad=1, labelspacing=0.5)
+
+        plt.xlim(0, n)
+        plt.ylim(2.9, 3.2)
+
+        # 显示图表
+        canvas = FigureCanvasTkAgg(fig, master=master)
+        canvas_widget = canvas.get_tk_widget()
+        canvas_widget.place(relx=0.5, rely=0.7, anchor="center")  # 调整相对位置
+        canvas_widget.config(height=300, width=500)
+        canvas.draw()
+
+
+    graph1()
+    graph2(pi)
+    

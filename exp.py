@@ -7,19 +7,23 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.lines import Line2D
 from matplotlib.patches import Circle
 
-from cal_pi import calculate_pi, graph1
+from cal_pi import calculate_pi
 
 
 class Experiment:
     def __init__(self, master):
         self.master = master
         self.master.title("My Experiment")
-        self.master.geometry("800x500")
+        self.master.geometry("600x800")
+        self.master.configure(bg="white")
         
         self.menu = tk.Menu(self.master, font=("黑体",12))
         self.master.config(menu=self.menu)
 
-        self.canvas = tk.Canvas(self.master, width=500, height=500, bg="white")
+        self.pi_frame = tk.Frame(self.master)  # 创建 Frame 用于显示π的图表
+        self.pi_frame.pack(side=tk.RIGHT, padx=20, pady=20)
+
+        self.canvas = tk.Canvas(self.master, width=500, height=800, bg="white")
         self.canvas.pack()
         self.pi_label = tk.Label(self.master, text=" π = ", font=("", 20))
         self.pi_label.pack()
@@ -53,7 +57,7 @@ class Experiment:
         calculate_pi(self.master)
 
     def poisson(self):
-        print("in")
+        pass
 
     def normal(self):
         pass
