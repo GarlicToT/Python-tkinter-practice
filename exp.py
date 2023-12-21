@@ -1,20 +1,21 @@
 import tkinter as tk
-from tkinter import simpledialog
 
+import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.lines import Line2D
-from matplotlib.patches import Circle
 
 from cal_pi import calculate_pi
+from large_num import law_of_large_numbers
+from normal import normal
+from poisson import poisson
 
 
 class Experiment:
     def __init__(self, master):
+        self.components = []
         self.master = master
         self.master.title("My Experiment")
-        self.master.geometry("600x800")
+        self.master.geometry("600x700")
         self.master.configure(bg="white")
         
         self.menu = tk.Menu(self.master, font=("黑体",12))
@@ -45,7 +46,6 @@ class Experiment:
         self.menu.add_cascade(label="大数定律", menu=c_menu)
 
         # Add menu items
-        # mc_menu.add_command(label="计算圆周率", command=print("hello"))
         mc_menu.add_command(label="计算圆周率", command=self.calculate_pi)
         p_menu.add_command(label="验证泊松定理", command=self.poisson)
         n_menu.add_command(label="正态分布概率密度图", command=self.normal)
@@ -54,16 +54,49 @@ class Experiment:
     # 用蒙特卡洛方法计算圆周率
     
     def calculate_pi(self):
-        calculate_pi(self.master)
+        for component in self.components:
+            if isinstance(component, matplotlib.backends.backend_tkagg.FigureCanvasTkAgg):
+                component.get_tk_widget().destroy()
+                self.components.remove(component)
+            else:
+                component.destroy()
+                self.components.remove(component)
+        comp_list = list(calculate_pi(self))
+        
+        self.components.extend(comp_list)
 
     def poisson(self):
-        pass
+        for component in self.components:
+            if isinstance(component, matplotlib.backends.backend_tkagg.FigureCanvasTkAgg):
+                component.get_tk_widget().destroy()
+                self.components.remove(component)
+            else:
+                component.destroy()
+                self.components.remove(component)
+        comp_list = list(poisson(self))
+        self.components.extend(comp_list)
 
     def normal(self):
-        pass
+        for component in self.components:
+            if isinstance(component, matplotlib.backends.backend_tkagg.FigureCanvasTkAgg):
+                component.get_tk_widget().destroy()
+                self.components.remove(component)
+            else:
+                component.destroy()
+                self.components.remove(component)
+        comp_list = list(normal(self))
+        self.components.extend(comp_list)
 
     def law_of_large_numbers(self):
-        pass
+        for component in self.components:
+            if isinstance(component, matplotlib.backends.backend_tkagg.FigureCanvasTkAgg):
+                component.get_tk_widget().destroy()
+                self.components.remove(component)
+            else:
+                component.destroy()
+                self.components.remove(component)
+        comp_list = list(law_of_large_numbers(self))
+        self.components.extend(comp_list)
 
     def on_closing(self):
         plt.close('all')

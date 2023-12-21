@@ -1,4 +1,5 @@
 # 从同一文件夹中导入exp.py
+import tkinter as tk
 from tkinter import simpledialog
 
 import matplotlib.pyplot as plt
@@ -8,29 +9,49 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Circle
 
 
-def calculate_pi(master):
-    # 接受用户输入随机点的个数n
-    n = simpledialog.askinteger("输入", "请输入随机点的个数n：", initialvalue=30000)
-    # tk.Entry(self.master, textvariable="123").pack()
-    # 设置圆的半径和圆心
-    radius = 1.0
-    a,b = (0.,0.)
-    # 设置正方形的边长
-    x_left, x_right = (a-radius, a+radius)
-    y_down, y_up = (b-radius, b+radius)
-    # 在正方形区域内随机投点
-    x = np.random.uniform(x_left, x_right, n)
-    y = np.random.uniform(y_down, y_up, n)
-    # 求平方根运算，计算点到圆心的距离，返回距离数组dis
-    dis = np.sqrt((x-a)**2 + (y-b)**2)
-    # 统计落在圆内的点的个数
-    # count = sum(np.where(dis <= radius))
-    count = np.sum(dis <= radius)
-    # 计算圆周率的近似值
-    pi = 4*count/n
-    print("π = ", pi)
+def calculate_pi(self):
+    master = self.master
+    n = tk.StringVar()
+    n.set("30000")
 
-    def graph1():
+    label = tk.Label(master, text="随机点的数目n:")
+    label.place(relx=0.3, rely=0.9, anchor="center")
+    inp = tk.Entry(master, textvariable=n)
+    inp.place(relx=0.5, rely=0.9, anchor="center")
+    global c1, c2
+    # 点击提交按钮后，获取输入框的值
+    def submit():
+        nVal = n.get()
+        print("n =", nVal)
+        c1,c2 = draw(int(nVal))
+
+
+    but = tk.Button(master, text="开始演示", command=submit)
+    but.place(relx=0.7, rely=0.9, anchor="center")
+
+
+    def draw(n):
+        radius = 1.0
+        a,b = (0.,0.)
+        # 设置正方形的边长
+        x_left, x_right = (a-radius, a+radius)
+        y_down, y_up = (b-radius, b+radius)
+        # 在正方形区域内随机投点
+        x = np.random.uniform(x_left, x_right, n)
+        y = np.random.uniform(y_down, y_up, n)
+        # 求平方根运算，计算点到圆心的距离，返回距离数组dis
+        dis = np.sqrt((x-a)**2 + (y-b)**2)
+        # 统计落在圆内的点的个数
+        # count = sum(np.where(dis <= radius))
+        count = np.sum(dis <= radius)
+        # 计算圆周率的近似值
+        pi = 4*count/n
+        print("π = ", pi)
+        c1=graph1(radius, a, b, x, y, x_left, x_right, y_down, y_up, n, count, pi)
+        c2=graph2(np.pi, n, dis, radius)
+        return c1, c2
+
+    def graph1(radius, a, b, x, y, x_left, x_right, y_down, y_up, n, count, pi):
         # 用pyplot进行可视化
         fig = plt.figure()
         ax1=fig.add_subplot(111)
@@ -64,11 +85,12 @@ def calculate_pi(master):
 
         canvas = FigureCanvasTkAgg(fig, master=master)
         canvas_widget = canvas.get_tk_widget()
-        canvas_widget.place(relx=0.5, rely=0.3, anchor="center")  # 调整相对位置
+        canvas_widget.place(relx=0.465, rely=0.3, anchor="center")  # 调整相对位置
         canvas_widget.config(height=300, width=500)
         canvas.draw()
+        return canvas
 
-    def graph2(pi_theoretical):
+    def graph2(pi_theoretical, n, dis, radius):
         # 计算不同n值下对应的pi模拟值
         n_values = np.arange(1, n+1)
         pi_simulated_values = 4 * np.cumsum(dis <= radius) / n_values
@@ -82,24 +104,25 @@ def calculate_pi(master):
         ax2.set_ylabel("估计的圆周率 π")
 
         # 绘制理论值的水平线
-        ax2.axhline(y=pi_theoretical, color="green", label="π的理论值", alpha=0.8)
+        ax2.axhline(y=pi_theoretical, color="green", label=f"π的理论值: 3.1415926", alpha=0.8)
         # 绘制模拟值的蓝色线
-        ax2.plot(n_values, pi_simulated_values, color="blue", label="π的模拟计算值", alpha=0.8)
+        ax2.plot(n_values, pi_simulated_values, color="blue", label=f"π的模拟计算值: {pi_simulated_values[-1]:.7f}", alpha=0.8)
 
         # 设置图例
-        ax2.legend(loc="lower right", fontsize=8, handlelength=0, borderpad=1, labelspacing=0.5)
+        ax2.legend(loc="lower right", fontsize=8, handlelength=1, borderpad=1, labelspacing=0.5)
 
         plt.xlim(0, n)
         plt.ylim(2.9, 3.2)
+        fig.tight_layout(pad=3)  # 调整布局，pad 可以根据需要调整
 
         # 显示图表
         canvas = FigureCanvasTkAgg(fig, master=master)
         canvas_widget = canvas.get_tk_widget()
-        canvas_widget.place(relx=0.5, rely=0.7, anchor="center")  # 调整相对位置
-        canvas_widget.config(height=300, width=500)
+        canvas_widget.place(relx=0.465, rely=0.7, anchor="center")  # 调整相对位置
+        canvas_widget.config(height=250 , width=500)
         canvas.draw()
+        return canvas
 
-
-    graph1()
-    graph2(pi)
+    c1,c2 = draw(30000)
     
+    return c1, c2, label, inp, but
