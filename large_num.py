@@ -1,6 +1,3 @@
-#  生成正态分布的样本（观测值），验证大数定律。画图展示随着样本容量的增加，随机变量（观测值）的算术平均依概率收敛到数学期望
-# 绘制正态分布图像的函数
-
 import tkinter as tk
 
 import matplotlib.pyplot as plt
@@ -60,10 +57,13 @@ def law_of_large_numbers(self):
         for i, xi in enumerate(x):
             plt.vlines(xi, 0, sampY[i], colors='blue', linestyle='solid', alpha=0.2, linewidth=0.8)
         
-        legend_icon1 = Line2D([0], [0], color='orange', label='随机变量的算术平均')
-        legend_text1 = f'随机变量的算术平均 μ={exp} $\sigma^2$={sq}'
+        legend_icon1 = Line2D([0], [0], color='orange', linewidth=1, label='前n项均值')
+        legend_icon2 = Line2D([0], [0], marker='o', color='blue', markersize=2, linestyle='', label='评委打分')
+        legend_icon3 = Line2D([0], [0], color='red', linestyle='dashed', linewidth=1, label='数学期望')
+
+        plt.legend(handles=[legend_icon1, legend_icon2, legend_icon3], loc='upper right')
+
         plt.ylim(exp-1.2*sq, exp+1.4*sq)
-        plt.legend(handles=[legend_icon1], labels=[legend_text1], loc='upper right')
         canvas = FigureCanvasTkAgg(fig, master=master)
         canvas_widget = canvas.get_tk_widget()
         canvas_widget.place(relx=0.465, rely=0.3, anchor="center")  # 调整相对位置

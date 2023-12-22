@@ -1,6 +1,4 @@
-# 从同一文件夹中导入exp.py
 import tkinter as tk
-from tkinter import simpledialog
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,7 +23,6 @@ def calculate_pi(self):
         print("n =", nVal)
         c1,c2 = draw(int(nVal))
 
-
     but = tk.Button(master, text="开始演示", command=submit)
     but.place(relx=0.7, rely=0.9, anchor="center")
 
@@ -42,7 +39,6 @@ def calculate_pi(self):
         # 求平方根运算，计算点到圆心的距离，返回距离数组dis
         dis = np.sqrt((x-a)**2 + (y-b)**2)
         # 统计落在圆内的点的个数
-        # count = sum(np.where(dis <= radius))
         count = np.sum(dis <= radius)
         # 计算圆周率的近似值
         pi = 4*count/n

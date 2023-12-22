@@ -1,5 +1,4 @@
 # 绘制正态分布图像的函数
-
 import tkinter as tk
 
 import matplotlib.pyplot as plt
@@ -46,8 +45,6 @@ def normal(self):
         plt.rcParams['font.sans-serif']=['SimHei']
         plt.rcParams['axes.unicode_minus'] = False
         ax1.plot(x, y, color="orange", alpha=0.5)
-        # plt.xlim(-10,10)
-        # plt.ylim(0,0.5)
         plt.vlines(mean, 0, norm.pdf(mean, mean, sq), colors='red', linestyle='dashed', alpha=0.3, linewidth=2.0)
         plt.vlines(mean+sq, 0, norm.pdf(mean+sq, mean, sq), colors='blue', linestyle='solid', alpha=0.3, linewidth=1.6)
         plt.vlines(mean-sq, 0, norm.pdf(mean-sq, mean, sq), colors='blue', linestyle='solid', alpha=0.3, linewidth=1.6)

@@ -35,7 +35,6 @@ class Experiment:
         self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def create_menu(self):
-        # Create a menu
         mc_menu = tk.Menu(self.menu, font=("黑体",10))
         self.menu.add_cascade(label="蒙特卡洛算法", menu=mc_menu)
         p_menu = tk.Menu(self.menu, font=("黑体",10))
@@ -45,13 +44,10 @@ class Experiment:
         c_menu = tk.Menu(self.menu, font=("黑体",10))
         self.menu.add_cascade(label="大数定律", menu=c_menu)
 
-        # Add menu items
         mc_menu.add_command(label="计算圆周率", command=self.calculate_pi)
         p_menu.add_command(label="验证泊松定理", command=self.poisson)
         n_menu.add_command(label="正态分布概率密度图", command=self.normal)
         c_menu.add_command(label="验证大数定律", command=self.law_of_large_numbers)
-
-    # 用蒙特卡洛方法计算圆周率
     
     def calculate_pi(self):
         for component in self.components:
